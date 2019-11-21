@@ -3,7 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 
 const GITHUB_USER_URL = "https://api.github.com/users/rossmawd"
-const GITHUB_REPOS_URL = "https://api.github.com/users/rossmawd/repos?page=3&per_page=100"
+const GITHUB_REPOS_URL = (page) => `https://api.github.com/users/rossmawd/repos?page=${page}&per_page=100`
 
 class App extends React.Component {
 
@@ -15,19 +15,33 @@ class App extends React.Component {
     }
   }
 
-  fetchAllRepos = () => {
-    //find out how many Repos the user has:
-   fetch(GITHUB_USER_URL).then(
-      resp => resp.json()
-    ).then(user => {
-      
-      this.setState({numberOfRepos: user.public_repos})
-      console.log("the number of Repos is", this.state.numberOfRepos)
-    })
 
-    return fetch(GITHUB_REPOS_URL).then(
-      resp => resp.json()
-    ).then(user => console.log(user))
+  fetchAllRepos = async () => {
+    console.log("fetching...")
+
+    const result = await fetch(GITHUB_USER_URL)
+    const user = await result.json()
+
+    await new Promise(resolve => setTimeout(resolve, 500))
+
+    console.log("fetch complete")
+    //store how many Repos the user has:
+    this.setState({ numberOfRepos: user.public_repos })
+    console.log("the number of Repos is", this.state.numberOfRepos)
+    //calculate the number of requests that must be done to gather all repos
+    let numberOfRequests = Math.ceil(this.state.numberOfRepos / 100)
+    console.log("the number of requests is", numberOfRequests)
+
+    let i = 0
+    do {
+      i += 1
+      console.log("request", i)
+      let resp = await fetch(GITHUB_REPOS_URL(i))
+      let repos = await resp.json()
+      this.setState({ repos: [...this.state.repos, ...repos] })
+      console.log("the repos in state are currently:", this.state.repos)
+    }
+    while (i < numberOfRequests);
   }
 
   componentDidMount() {
@@ -60,3 +74,26 @@ class App extends React.Component {
 }
 
 export default App;
+
+
+
+  // fetchAllRepos = () => {
+  //   //find out how many Repos the user has:
+  //   fetch(GITHUB_USER_URL).then(
+  //     resp => resp.json()
+  //   ).then(user => {
+  //     //save this number into state
+  //     this.setState({ numberOfRepos: user.public_repos })
+  //     console.log("the number of Repos is", this.state.numberOfRepos)
+  //     //calculate the rounded up number of requests that must be done to gather all repos
+  //     let numberOfRequests = Math.ceil(this.state.numberOfRepos / 100)
+  //     console.log("the number of requests is", numberOfRequests)
+  //     return numberOfRequests
+  //   }).then(requests => {
+
+  //   })
+
+  //   return fetch(GITHUB_REPOS_URL).then(
+  //     resp => resp.json()
+  //   ).then(user => console.log(user))
+  // }
