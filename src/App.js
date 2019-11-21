@@ -12,20 +12,24 @@ class App extends React.Component {
     this.state = {
       repos: [],
       numberOfRepos: null,
-      languages: []
+      favLanguage: ""
     }
+  }
+
+  componentDidMount() {
+    this.fetchAllRepos().then(
+      resp => this.findFavouriteLanguage()
+    )
+    console.log("component has mounted")
   }
 
 
   fetchAllRepos = async () => {
-    console.log("fetching Repos...")
-
     const result = await fetch(GITHUB_USER_URL)
     const user = await result.json()
 
-    await new Promise(resolve => setTimeout(resolve, 500))
+    console.log("fetching Repos...")
 
-    console.log("fetch complete")
     //store how many Repos the user has:
     this.setState({ numberOfRepos: user.public_repos })
     console.log("the number of Repos is", this.state.numberOfRepos)
@@ -33,6 +37,7 @@ class App extends React.Component {
     let numberOfRequests = Math.ceil(this.state.numberOfRepos / 100)
     console.log("the number of requests is", numberOfRequests)
 
+    //loop through the required requests and add the response into the 'repos' state
     let i = 0
     do {
       i += 1
@@ -43,8 +48,8 @@ class App extends React.Component {
       console.log("the repos in state are currently:", this.state.repos)
     }
     while (i < numberOfRequests);
-
   }
+
 
   findFavouriteLanguage = () => {
     let languages = []
@@ -53,17 +58,43 @@ class App extends React.Component {
     this.state.repos.map(repo => {
       languages.push(repo.language)
     }
-
     )
-    console.log(languages)
+    languages.sort()
+
+    this.countLanguages(languages)
   }
 
-  componentDidMount() {
-    this.fetchAllRepos().then(
-      resp => this.findFavouriteLanguage()
-    )
-    console.log("component has mounted")
+  countLanguages = (languages) => {
+    console.log("Here are the languages", languages)
+
+    console.log("Counting Languages...")
+    let maxCount = 0
+    let currentCount = 0
+    let currentWinner = ""
+    let currentLang = languages[0]
+
+    languages.map((language, i) => {
+      if (language === currentLang) {
+        currentCount += 1
+
+      } else {
+
+        if (currentCount > maxCount) {
+          maxCount = currentCount
+          currentWinner = languages[i - 1]
+          console.log("as the max count is now", maxCount)
+          console.log("...the winner has been changed to", currentWinner)
+        }
+        currentLang = language
+        currentCount = 0
+      }
+
+    })
+    this.setState({ favLanguage: currentWinner })
+    console.log("This Users favourite language is: ", this.state.favLanguage)
   }
+
+
 
   // }
   // function App() {
