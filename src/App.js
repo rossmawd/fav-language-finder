@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import SearchBox from './SearchBox/SearchBox'
+import SearchResults from './SearchResults/SearchResults'
 
 const GITHUB_USER_URL = (user) => `https://api.github.com/users/${user}`
 const GITHUB_REPOS_URL = (page, user) => `https://api.github.com/users/${user}/repos?page=${page}&per_page=100`
@@ -107,12 +108,18 @@ class App extends React.Component {
           currentUsername={this.state.username}
           handleUserNameSubmit={this.handleUserNameSubmit}
         />
+        <br />
+        <SearchResults />
       </div>
     );
   }
 }
 
 export default App;
+
+
+
+
 
 
 
