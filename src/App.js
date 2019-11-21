@@ -1,9 +1,13 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import SearchBox from './SearchBox/SearchBox'
 
-const GITHUB_USER_URL = "https://api.github.com/users/defunkt"
-const GITHUB_REPOS_URL = (page) => `https://api.github.com/users/defunkt/repos?page=${page}&per_page=100`
+
+const GITHUB_USER_URL = "https://api.github.com/users/cazabelle"
+const GITHUB_REPOS_URL = (page) => `https://api.github.com/users/cazabelle/repos?page=${page}&per_page=100`
+
+
 
 class App extends React.Component {
 
@@ -15,6 +19,8 @@ class App extends React.Component {
       favLanguage: ""
     }
   }
+
+
 
   componentDidMount() {
     this.fetchAllRepos().then(
@@ -83,7 +89,7 @@ class App extends React.Component {
           maxCount = currentCount
           currentWinner = languages[i - 1]
           console.log("as the max count is now", maxCount)
-          console.log("...the winner has been changed to", currentWinner)
+          console.log("...the current winner has been changed to", currentWinner)
         }
         currentLang = language
         currentCount = 0
@@ -101,20 +107,8 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-        </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-        </a>
-        </header>
+
+        <SearchBox />
       </div>
     );
   }
@@ -123,6 +117,21 @@ class App extends React.Component {
 export default App;
 
 
+
+{/* <header className="App-header">
+<img src={logo} className="App-logo" alt="logo" />
+<p>
+  Edit <code>src/App.js</code> and save to reload.
+</p>
+<a
+  className="App-link"
+  href="https://reactjs.org"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  Learn React
+</a>
+</header> */}
 
   // fetchAllRepos = () => {
   //   //find out how many Repos the user has:
