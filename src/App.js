@@ -2,8 +2,8 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-const GITHUB_USER_URL = "https://api.github.com/users/rossmawd"
-const GITHUB_REPOS_URL = (page) => `https://api.github.com/users/rossmawd/repos?page=${page}&per_page=100`
+const GITHUB_USER_URL = "https://api.github.com/users/defunkt"
+const GITHUB_REPOS_URL = (page) => `https://api.github.com/users/defunkt/repos?page=${page}&per_page=100`
 
 class App extends React.Component {
 
@@ -11,13 +11,14 @@ class App extends React.Component {
     super(props);
     this.state = {
       repos: [],
-      numberOfRepos: null
+      numberOfRepos: null,
+      languages: []
     }
   }
 
 
   fetchAllRepos = async () => {
-    console.log("fetching...")
+    console.log("fetching Repos...")
 
     const result = await fetch(GITHUB_USER_URL)
     const user = await result.json()
@@ -42,10 +43,25 @@ class App extends React.Component {
       console.log("the repos in state are currently:", this.state.repos)
     }
     while (i < numberOfRequests);
+
+  }
+
+  findFavouriteLanguage = () => {
+    let languages = []
+    console.log("Finding favourite language...")
+
+    this.state.repos.map(repo => {
+      languages.push(repo.language)
+    }
+
+    )
+    console.log(languages)
   }
 
   componentDidMount() {
-    this.fetchAllRepos()
+    this.fetchAllRepos().then(
+      resp => this.findFavouriteLanguage()
+    )
     console.log("component has mounted")
   }
 
