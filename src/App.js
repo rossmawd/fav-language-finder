@@ -1,13 +1,9 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import SearchBox from './SearchBox/SearchBox'
 
-
-const GITHUB_USER_URL = "https://api.github.com/users/cazabelle"
-const GITHUB_REPOS_URL = (page) => `https://api.github.com/users/cazabelle/repos?page=${page}&per_page=100`
-
-
+const GITHUB_USER_URL = (user) => `https://api.github.com/users/${user}`
+const GITHUB_REPOS_URL = (page, user) => `https://api.github.com/users/${user}/repos?page=${page}&per_page=100`
 
 class App extends React.Component {
 
@@ -16,22 +12,24 @@ class App extends React.Component {
     this.state = {
       repos: [],
       numberOfRepos: null,
-      favLanguage: ""
+      favLanguage: "",
+      username: ""
     }
   }
 
-
-
-  componentDidMount() {
+  handleUserNameSubmit = () => {
     this.fetchAllRepos().then(
       resp => this.findFavouriteLanguage()
     )
     console.log("component has mounted")
   }
 
+  updateUsername = (event) => {
+    this.setState({ username: event.target.value })
+  }
 
   fetchAllRepos = async () => {
-    const result = await fetch(GITHUB_USER_URL)
+    const result = await fetch(GITHUB_USER_URL(this.state.username))
     const user = await result.json()
 
     console.log("fetching Repos...")
@@ -48,7 +46,7 @@ class App extends React.Component {
     do {
       i += 1
       console.log("request", i)
-      let resp = await fetch(GITHUB_REPOS_URL(i))
+      let resp = await fetch(GITHUB_REPOS_URL(i, this.state.username))
       let repos = await resp.json()
       this.setState({ repos: [...this.state.repos, ...repos] })
       console.log("the repos in state are currently:", this.state.repos)
@@ -100,15 +98,15 @@ class App extends React.Component {
     console.log("This Users favourite language is: ", this.state.favLanguage)
   }
 
-
-
-  // }
-  // function App() {
   render() {
     return (
       <div className="App">
 
-        <SearchBox />
+        <SearchBox
+          updateUsername={this.updateUsername}
+          currentUsername={this.state.username}
+          handleUserNameSubmit={this.handleUserNameSubmit}
+        />
       </div>
     );
   }
