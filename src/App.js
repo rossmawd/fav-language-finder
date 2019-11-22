@@ -2,9 +2,9 @@ import React from 'react';
 import './App.css';
 import SearchBox from './SearchBox/SearchBox'
 import SearchResults from './SearchResults/SearchResults'
-
-const GITHUB_USER_URL = (user) => `https://api.github.com/users/${user}`
-const GITHUB_REPOS_URL = (page, user) => `https://api.github.com/users/${user}/repos?page=${page}&per_page=100`
+const GITHUB_URL = "https://api.github.com/users/"
+const GITHUB_USER_URL = (user) => `${GITHUB_URL}${user}`
+const GITHUB_REPOS_URL = (page, user) => `${GITHUB_URL}${user}/repos?page=${page}&per_page=100`
 
 class App extends React.Component {
 
@@ -18,11 +18,9 @@ class App extends React.Component {
     }
   }
 
-  handleUserNameSubmit = () => {
-    this.fetchAllRepos().then(
-      resp => this.findFavouriteLanguage()
-    )
-    console.log("component has mounted")
+  handleUserNameSubmit = async () => {
+    await this.fetchAllRepos()
+    this.findFavouriteLanguage()
   }
 
   updateUsername = (event) => {
