@@ -19,6 +19,7 @@ class App extends React.Component {
   }
 
   handleUserNameSubmit = async () => {
+    await this.setState({ repos: [] })
     await this.fetchAllRepos()
     this.findFavouriteLanguage()
   }
@@ -58,10 +59,7 @@ class App extends React.Component {
     let languages = []
     console.log("Finding favourite language...")
 
-    this.state.repos.map(repo => {
-      languages.push(repo.language)
-    }
-    )
+    this.state.repos.map(repo => languages.push(repo.language))
     languages.sort()
 
     this.countLanguages(languages)
@@ -76,10 +74,9 @@ class App extends React.Component {
     let currentWinner = ""
     let currentLang = languages[0]
 
-    languages.map((language, i) => {
+    languages.forEach((language, i) => {
       if (language === currentLang) {
         currentCount += 1
-
       } else {
 
         if (currentCount > maxCount) {
@@ -91,8 +88,9 @@ class App extends React.Component {
         currentLang = language
         currentCount = 0
       }
-
+      //return language
     })
+
     this.setState({ favLanguage: currentWinner })
     console.log("This Users favourite language is: ", this.state.favLanguage)
   }
