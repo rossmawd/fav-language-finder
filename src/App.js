@@ -13,7 +13,8 @@ class App extends React.Component {
     this.state = {
       repos: [],
       numberOfRepos: null,
-      favLanguage: "",
+      favLanguage: null,
+      favLanguageNumber: null,
       username: ""
     }
   }
@@ -92,6 +93,7 @@ class App extends React.Component {
     })
 
     this.setState({ favLanguage: currentWinner })
+    this.setState({ favLanguageNumber: maxCount })
     console.log("This Users favourite language is: ", this.state.favLanguage)
   }
 
@@ -105,7 +107,10 @@ class App extends React.Component {
           handleUserNameSubmit={this.handleUserNameSubmit}
         />
         <br />
-        <SearchResults />
+        {this.state.favLanguageNumber ? (<SearchResults
+          favLanguage={this.state.favLanguage}
+          favLanguageNumber={this.state.favLanguageNumber}
+        />) : null}
       </div>
     );
   }

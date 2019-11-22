@@ -1,12 +1,11 @@
 import React from 'react';
 import { Label } from 'semantic-ui-react'
 
-const SearchResults = () => {
+const SearchResults = ({ favLanguage, favLanguageNumber }) => {
   return (
     <div>
       <Label>
-        Dogs
-    <Label.Detail>214</Label.Detail>
+        It's {favLanguage} with:<Label.Detail>{favLanguageNumber}</Label.Detail> repos
       </Label>
     </div>
   );
