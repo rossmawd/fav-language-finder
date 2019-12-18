@@ -23,8 +23,13 @@ class App extends React.Component {
 
   handleUserNameSubmit = async () => {
     await this.setState({ repos: [] })
-    await this.fetchAllRepos()
-    this.findFavouriteLanguage()
+    try {
+      await this.fetchAllRepos()
+    } catch (e) {
+      console.error(e)
+    } finally {
+      this.findFavouriteLanguage()
+    }
   }
 
   updateUsername = (event) => {
@@ -61,7 +66,7 @@ class App extends React.Component {
   findFavouriteLanguage = () => {
     let languages = []
     console.log("Finding favourite language...")
-
+    console.log("HERE", this.state.repos)
     this.state.repos.map(repo => languages.push(repo.language))
     languages.sort()
 
