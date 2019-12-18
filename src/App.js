@@ -10,23 +10,21 @@ const GITHUB_REPOS_URL = (page, user) => `${GITHUB_URL}${user}/repos?page=${page
 
 class App extends React.Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      repos: [],
-      numberOfRepos: null,
-      favLanguage: null,
-      favLanguageNumber: null,
-      username: ""
-    }
+  state = {
+    repos: null,
+    numberOfRepos: null,
+    favLanguage: null,
+    favLanguageNumber: null,
+    username: ""
   }
 
+
   handleUserNameSubmit = async () => {
-    await this.setState({ repos: [] })
+    await this.setState({ repos: [] })  //clearing previous state
     try {
       await this.fetchAllRepos()
     } catch (e) {
-      console.error(e)
+      console.log("Here is the error")
     } finally {
       this.findFavouriteLanguage()
     }
@@ -62,11 +60,10 @@ class App extends React.Component {
     while (i < numberOfRequests);
   }
 
-
   findFavouriteLanguage = () => {
     let languages = []
     console.log("Finding favourite language...")
-    console.log("HERE", this.state.repos)
+
     this.state.repos.map(repo => languages.push(repo.language))
     languages.sort()
 
@@ -99,8 +96,7 @@ class App extends React.Component {
       //return language
     })
 
-    this.setState({ favLanguage: currentWinner })
-    this.setState({ favLanguageNumber: maxCount })
+    this.setState({ favLanguage: currentWinner, favLanguageNumber: maxCount })
     console.log("This Users favourite language is: ", this.state.favLanguage)
   }
 
