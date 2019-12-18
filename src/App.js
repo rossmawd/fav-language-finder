@@ -107,20 +107,22 @@ class App extends React.Component {
   }
 
   render() {
+    const { favLanguageNumber, favLanguage, loading, username } = this.state
+
     return (
       <div className="App">
 
         <SearchBox
           updateUsername={this.updateUsername}
-          currentUsername={this.state.username}
+          currentUsername={username}
           handleUserNameSubmit={this.handleUserNameSubmit}
         />
         <br />
-        {this.state.favLanguageNumber ? (<SearchResults
-          favLanguage={this.state.favLanguage}
-          favLanguageNumber={this.state.favLanguageNumber}
+        {favLanguageNumber ? (<SearchResults
+          favLanguage={favLanguage}
+          favLanguageNumber={favLanguageNumber}
         />) : null}
-        {this.state.loading ? <Loading /> : null}
+        {loading ? <Loading /> : null}
       </div>
     );
   }
