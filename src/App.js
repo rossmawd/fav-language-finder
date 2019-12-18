@@ -100,7 +100,7 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-
+        Hello
         <SearchBox
           updateUsername={this.updateUsername}
           currentUsername={this.state.username}
