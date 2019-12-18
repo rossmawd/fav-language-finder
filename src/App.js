@@ -9,15 +9,14 @@ const GITHUB_USER_URL = (user) => `${GITHUB_URL}${user}`
 const GITHUB_REPOS_URL = (page, user) => `${GITHUB_URL}${user}/repos?page=${page}&per_page=100`
 
 class App extends React.Component {
-
   state = {
     repos: null,
     numberOfRepos: null,
     favLanguage: null,
     favLanguageNumber: null,
-    username: ""
+    username: "",
+    loading: null
   }
-
 
   handleUserNameSubmit = async () => {
     await this.setState({ repos: [] })  //clearing previous state
@@ -30,35 +29,42 @@ class App extends React.Component {
     }
   }
 
+  fetchAllRepos = async () => {
+    const result = await fetch(GITHUB_USER_URL(this.state.username))
+
+    const user = await result.json()
+    if (user.public_repos === 0) {
+      alert("This user has no repos")
+      return null
+    } else if (user.message) { alert("No susch user!") } else {
+
+      //store how many Repos the user has:
+      this.setState({ numberOfRepos: user.public_repos, loading: true })
+      console.log("the number of Repos is", this.state.numberOfRepos)
+      //calculate the number of requests that must be done to gather all repos
+      let numberOfRequests = Math.ceil(this.state.numberOfRepos / 100)
+      console.log("the number of requests is", numberOfRequests)
+
+      //loop through the required requests and add the response into the 'repos' state
+      let i = 0
+      do {
+        i += 1
+        console.log("request", i)
+        let resp = await fetch(GITHUB_REPOS_URL(i, this.state.username))
+        let repos = await resp.json()
+        this.setState({ repos: [...this.state.repos, ...repos] })
+        console.log("the repos in state are currently:", this.state.repos)
+      }
+      while (i < numberOfRequests);
+    }
+
+
+  }
+
   updateUsername = (event) => {
     this.setState({ username: event.target.value })
   }
 
-  fetchAllRepos = async () => {
-    const result = await fetch(GITHUB_USER_URL(this.state.username))
-    const user = await result.json()
-
-    console.log("fetching Repos...")
-
-    //store how many Repos the user has:
-    this.setState({ numberOfRepos: user.public_repos })
-    console.log("the number of Repos is", this.state.numberOfRepos)
-    //calculate the number of requests that must be done to gather all repos
-    let numberOfRequests = Math.ceil(this.state.numberOfRepos / 100)
-    console.log("the number of requests is", numberOfRequests)
-
-    //loop through the required requests and add the response into the 'repos' state
-    let i = 0
-    do {
-      i += 1
-      console.log("request", i)
-      let resp = await fetch(GITHUB_REPOS_URL(i, this.state.username))
-      let repos = await resp.json()
-      this.setState({ repos: [...this.state.repos, ...repos] })
-      console.log("the repos in state are currently:", this.state.repos)
-    }
-    while (i < numberOfRequests);
-  }
 
   findFavouriteLanguage = () => {
     let languages = []
@@ -96,7 +102,7 @@ class App extends React.Component {
       //return language
     })
 
-    this.setState({ favLanguage: currentWinner, favLanguageNumber: maxCount })
+    this.setState({ favLanguage: currentWinner, favLanguageNumber: maxCount, loading: null })
     console.log("This Users favourite language is: ", this.state.favLanguage)
   }
 
@@ -113,7 +119,8 @@ class App extends React.Component {
         {this.state.favLanguageNumber ? (<SearchResults
           favLanguage={this.state.favLanguage}
           favLanguageNumber={this.state.favLanguageNumber}
-        />) : <Loading />}
+        />) : null}
+        {this.state.loading ? <Loading /> : null}
       </div>
     );
   }
