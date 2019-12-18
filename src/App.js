@@ -2,6 +2,8 @@ import React from 'react';
 import './App.css';
 import SearchBox from './SearchBox/SearchBox'
 import SearchResults from './SearchResults/SearchResults'
+import Loading from './Loading';
+
 const GITHUB_URL = "https://api.github.com/users/"
 const GITHUB_USER_URL = (user) => `${GITHUB_URL}${user}`
 const GITHUB_REPOS_URL = (page, user) => `${GITHUB_URL}${user}/repos?page=${page}&per_page=100`
@@ -100,7 +102,7 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        Hello
+
         <SearchBox
           updateUsername={this.updateUsername}
           currentUsername={this.state.username}
@@ -110,7 +112,7 @@ class App extends React.Component {
         {this.state.favLanguageNumber ? (<SearchResults
           favLanguage={this.state.favLanguage}
           favLanguageNumber={this.state.favLanguageNumber}
-        />) : null}
+        />) : <Loading />}
       </div>
     );
   }
